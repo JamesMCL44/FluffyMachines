@@ -447,40 +447,35 @@ public class FluffyItems {
     );
 
     public static final SlimefunItemStack FLUFFY_WRENCH = new SlimefunItemStack("FLUFFY_WRENCH",
-// <<<<<<< HEAD
-//         Material.GOLDEN_AXE,
-//         "&6Fluffy扳手",
-// =======
         FluffyWrench.Wrench.DEFAULT.getMaterial(),
-        "&6Fluffy Wrench",
-// >>>>>>> upstream/master
+        "&6Fluffy扳手",
         "",
         "&7可以快速移除貨運連接管道",
         "&7及電力組件",
         "",
-        "&e左擊&7/&e右擊 &7相應的物件把它移除"
+        "&e左擊&7/&e右擊 &7相容的物件把它移除"
     );
 
     public static final SlimefunItemStack REINFORCED_FLUFFY_WRENCH =
         new SlimefunItemStack("REINFORCED_FLUFFY_WRENCH",
         FluffyWrench.Wrench.REINFORCED.getMaterial(),
-        "&bReinforced Fluffy Wrench",
+        "&b強化Fluffy扳手",
         "",
-        "&7Used to quickly remove Slimefun cargo nodes",
-        "&7and electricity components",
+        "&7可以快速移除貨運連接管道",
+        "&7及電力組件",
         "",
-        "&eLeft&7/&eRight Click &7a compatible block to break it"
+        "&e左擊&7/&e右擊 &7相容的物件把它移除"
     );
 
     public static final SlimefunItemStack CARBONADO_FLUFFY_WRENCH =
         new SlimefunItemStack("CARBONADO_FLUFFY_WRENCH",
         FluffyWrench.Wrench.CARBONADO.getMaterial(),
-        "&7Carbonado Fluffy Wrench",
+        "&7碳纖維Fluffy扳手",
         "",
-        "&7Used to quickly remove Slimefun cargo nodes",
-        "&7and electricity components",
+        "&7可以快速移除貨運連接管道",
+        "&7及電力組件",
         "",
-        "&eLeft&7/&eRight Click &7a compatible block to break it",
+        "&e左擊&7/&e右擊 &7相容的物件把它移除",
         "",
         LoreBuilder.powerCharged(0, FluffyWrench.Wrench.CARBONADO.getMaxCharge())
     );
@@ -495,22 +490,22 @@ public class FluffyItems {
     public static final SlimefunItemStack ADVANCED_CHARGING_BENCH = new SlimefunItemStack(
         "ADVANCED_CHARGING_BENCH",
         Material.SMITHING_TABLE,
-        "&cAdvanced Charging Bench",
+        "&c進階充電台",
         "",
-        "&7Charges items",
-        "&7Can be upgraded using an &6ACB Upgrade Card"
+        "&7為物件充電",
+        "&7可以用 ACB升級卡 進行升級"
     );
 
     public static final SlimefunItemStack ACB_UPGRADE_CARD = new SlimefunItemStack(
         "ACB_UPGRADE_CARD",
         Material.PAPER,
-        "&6ACB Upgrade Card",
+        "&6ACB升級卡",
         "",
-        "&eRight Click &7onto an &cAdvanced Charging Bench",
+        "&e右按 &7在 &c進階充電台",
         "",
-        "&6Charge Speed &a+" + AdvancedChargingBench.CHARGE + "J",
-        "&6Capacity &a+" + AdvancedChargingBench.CAPACITY +"J",
-        "&6Energy Consumption &c+" + AdvancedChargingBench.ENERGY_CONSUMPTION + "J"
+        "&6充電速度 &a+" + AdvancedChargingBench.CHARGE + "J",
+        "&6容量 &a+" + AdvancedChargingBench.CAPACITY +"J",
+        "&6電力消耗 &c+" + AdvancedChargingBench.ENERGY_CONSUMPTION + "J"
     );
 
     private static final Enchantment glowEnchant = Enchantment.getByKey(Constants.GLOW_ENCHANT);

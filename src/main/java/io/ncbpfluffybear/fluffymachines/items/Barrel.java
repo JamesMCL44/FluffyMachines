@@ -89,16 +89,8 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
                 if (BlockStorage.getLocationInfo(b.getLocation(), "stored") == null) {
 
                     menu.replaceExistingItem(STATUS_SLOT, new CustomItem(
-// <<<<<<< HEAD
-//                         Material.LIME_STAINED_GLASS_PANE, "&6已存物件: &e0" + " / " + MAX_STORAGE, "&70%"));
-//                     menu.addMenuClickHandler(STATUS_SLOT, ChestMenuUtils.getEmptyClickHandler());
-
-//                     menu.replaceExistingItem(DISPLAY_SLOT, new CustomItem(Material.BARRIER, "&c空的"));
-//                     menu.addMenuClickHandler(DISPLAY_SLOT, ChestMenuUtils.getEmptyClickHandler());
-// =======
-                        Material.LIME_STAINED_GLASS_PANE, "&6Items Stored: &e0" + " / " + MAX_STORAGE, "&70%"));
-                    menu.replaceExistingItem(DISPLAY_SLOT, new CustomItem(Material.BARRIER, "&cEmpty"));
-// >>>>>>> upstream/master
+                        Material.LIME_STAINED_GLASS_PANE, "&6已存物件: &e0" + " / " + MAX_STORAGE, "&70%"));
+                    menu.replaceExistingItem(DISPLAY_SLOT, new CustomItem(Material.BARRIER, "&c空的"));
 
                     BlockStorage.addBlockInfo(b, "stored", "0");
 
@@ -115,31 +107,23 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
                 menu.addMenuClickHandler(STATUS_SLOT, ChestMenuUtils.getEmptyClickHandler());
                 menu.addMenuClickHandler(DISPLAY_SLOT, ChestMenuUtils.getEmptyClickHandler());
 
-// <<<<<<< HEAD
-//                 // We need to put this here because this feature was implemented after barrels was introduced to FM
-//                 BlockStorage.getInventory(b).replaceExistingItem(HOLOGRAM_TOGGLE_SLOT,
-//                     new CustomItem(Material.QUARTZ_SLAB, "&3切換浮動字"));
-//                 BlockStorage.getInventory(b).addMenuClickHandler(HOLOGRAM_TOGGLE_SLOT, (pl, slot, item, action) -> {
-// =======
-                // Toggle hologram (Dynamic button)
                 String holo = BlockStorage.getLocationInfo(b.getLocation(), "holo");
                 if (holo == null || holo.equals("true")) {
                     menu.replaceExistingItem(HOLOGRAM_TOGGLE_SLOT,
-                        new CustomItem(Material.QUARTZ_SLAB, "&3Toggle Hologram &a(On)"));
+                        new CustomItem(Material.QUARTZ_SLAB, "&3切換浮動字 &a(On)"));
                 } else {
                     menu.replaceExistingItem(HOLOGRAM_TOGGLE_SLOT,
-                        new CustomItem(Material.QUARTZ_SLAB, "&3Toggle Hologram &c(Off)"));
+                        new CustomItem(Material.QUARTZ_SLAB, "&3切換浮動字 &c(Off)"));
                 }
                 menu.addMenuClickHandler(HOLOGRAM_TOGGLE_SLOT, (pl, slot, item, action) -> {
-// >>>>>>> upstream/master
                     toggleHolo(b);
                     return false;
                 });
 
                 // Insert all
                 menu.replaceExistingItem(INSERT_ALL_SLOT,
-                    new CustomItem(Material.CYAN_STAINED_GLASS_PANE, "&bInsert All",
-                        "&7> Click here to insert all", "&7compatible items into the barrel"));
+                    new CustomItem(Material.CYAN_STAINED_GLASS_PANE, "&b加入所有",
+                        "&7> 點擊這把所有相容物件", "&7加入到桶子內"));
                 menu.addMenuClickHandler(INSERT_ALL_SLOT, (pl, slot, item, action) -> {
                     insertAll(pl, menu, b);
                     return false;
@@ -147,8 +131,8 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
 
                 // Extract all
                 menu.replaceExistingItem(EXTRACT_ALL_SLOT,
-                    new CustomItem(Material.ORANGE_STAINED_GLASS_PANE, "&6Extract All",
-                        "&7> Click here to extract", "&7all items to your inventory"));
+                    new CustomItem(Material.ORANGE_STAINED_GLASS_PANE, "&6提取所有",
+                        "&7> 點擊這把所有相容物件", "&7從桶子內提取出來"));
                 menu.addMenuClickHandler(EXTRACT_ALL_SLOT, (pl, slot, item, action) -> {
                     extractAll(pl, menu, b);
                     return false;
@@ -177,98 +161,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
             }
         };
 
-// <<<<<<< HEAD
-//         registerBlockHandler(getId(), (p, b, stack, reason) -> {
-//             BlockMenu inv = BlockStorage.getInventory(b);
-//             String storedString = BlockStorage.getLocationInfo(b.getLocation(), "stored");
-//             int stored = Integer.parseInt(storedString);
-
-//             if (inv != null) {
-
-//                 int itemCount = 0;
-
-//                 SlimefunItem sfItem = SlimefunItem.getByItem(p.getInventory().getItemInMainHand());
-//                 if (sfItem != null && (
-//                     sfItem == SlimefunItems.EXPLOSIVE_PICKAXE.getItem()
-//                         || sfItem == SlimefunItems.EXPLOSIVE_SHOVEL.getItem()
-//                         || sfItem == FluffyItems.UPGRADED_EXPLOSIVE_PICKAXE.getItem()
-//                         || sfItem == FluffyItems.UPGRADED_EXPLOSIVE_SHOVEL.getItem()
-//                 )) {
-//                     Utils.send(p, "&c你不可以使用爆破工具破壞桶子!");
-//                     removeHologram(b);
-//                     return true;
-//                 }
-
-//                 for (Entity e : p.getNearbyEntities(5, 5, 5)) {
-//                     if (e instanceof Item) {
-//                         itemCount++;
-//                     }
-//                 }
-
-//                 if (itemCount > 5) {
-//                     Utils.send(p, "&c請先移除桶子附近的物品!");
-//                     return false;
-//                 }
-
-//                 inv.dropItems(b.getLocation(), INPUT_SLOTS);
-//                 inv.dropItems(b.getLocation(), OUTPUT_SLOTS);
-
-//                 if (stored > 0) {
-//                     int stackSize = inv.getItemInSlot(DISPLAY_SLOT).getMaxStackSize();
-//                     ItemStack unKeyed = Utils.unKeyItem(inv.getItemInSlot(DISPLAY_SLOT));
-
-//                     if (stored > OVERFLOW_AMOUNT) {
-
-//                         Utils.send(p, "&e桶子已滿了! 溢出了 " + OVERFLOW_AMOUNT + "件物品!");
-//                         int toRemove = OVERFLOW_AMOUNT;
-//                         while (toRemove >= stackSize) {
-
-//                             b.getWorld().dropItemNaturally(b.getLocation(), new CustomItem(unKeyed, stackSize));
-
-//                             toRemove = toRemove - stackSize;
-//                         }
-
-//                         if (toRemove > 0) {
-//                             b.getWorld().dropItemNaturally(b.getLocation(), new CustomItem(unKeyed, toRemove));
-//                         }
-
-//                         BlockStorage.addBlockInfo(b, "stored", String.valueOf(stored - OVERFLOW_AMOUNT));
-//                         updateMenu(b, inv);
-
-//                         return false;
-//                     } else {
-
-//                         // Everything greater than 1 stack
-//                         while (stored >= stackSize) {
-
-//                             b.getWorld().dropItemNaturally(b.getLocation(), new CustomItem(unKeyed, stackSize));
-
-//                             stored = stored - stackSize;
-//                         }
-
-//                         // Drop remaining, if there is any
-//                         if (stored > 0) {
-//                             b.getWorld().dropItemNaturally(b.getLocation(), new CustomItem(unKeyed, stored));
-//                         }
-
-//                         // In case they use an explosive pick
-//                         BlockStorage.addBlockInfo(b, "stored", "0");
-//                         updateMenu(b, inv);
-//                         removeHologram(b);
-//                         return true;
-//                     }
-//                 } else {
-//                     removeHologram(b);
-//                     return true;
-//                 }
-
-//             }
-//             return true;
-//         });
-
-// =======
         addItemHandler(onBreak());
-// >>>>>>> upstream/master
         addItemSetting(showHologram);
 
     }
@@ -293,7 +186,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
                     }
 
                     if (itemCount > 5) {
-                        Utils.send(p, "&cPlease remove nearby items before breaking this barrel!");
+                        Utils.send(p, "&c請先移除桶子附近的物品!");
                         e.setCancelled(true);
                         return;
                     }
@@ -307,8 +200,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
 
                         if (stored > OVERFLOW_AMOUNT) {
 
-                            Utils.send(p, "&eThere are more than " + OVERFLOW_AMOUNT + " items in this barrel! " +
-                                "Dropping " + OVERFLOW_AMOUNT + " items instead!");
+                            Utils.send(p, "&e桶子已滿了! 溢出了 " + OVERFLOW_AMOUNT + "件物品!!");
                             int toRemove = OVERFLOW_AMOUNT;
                             while (toRemove >= stackSize) {
 
@@ -499,8 +391,8 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
         // This helps a bit with lag, but may have visual impacts
         if (inv.hasViewer()) {
             inv.replaceExistingItem(STATUS_SLOT, new CustomItem(
-                Material.LIME_STAINED_GLASS_PANE, "&6Items Stored: &e" + stored + " / " + MAX_STORAGE,
-                "&b" + storedStacks + " Stacks &8| &7" + storedPercent + "&7%"));
+                Material.LIME_STAINED_GLASS_PANE, "&6已存物件: &e" + stored + " / " + MAX_STORAGE,
+                "&b" + storedStacks + "組 &8| &7" + storedPercent + "&7%"));
         }
 
         if (inv.getItemInSlot(DISPLAY_SLOT) != null && inv.getItemInSlot(DISPLAY_SLOT).getItemMeta().hasDisplayName()) {
@@ -509,16 +401,6 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
             itemName = WordUtils.capitalizeFully(inv.getItemInSlot(DISPLAY_SLOT).getType().name().replace("_", " "));
         }
 
-// <<<<<<< HEAD
-//         String storedPercent = doubleRoundAndFade((double) stored / (double) MAX_STORAGE * 100);
-//         String storedStacks =
-//             doubleRoundAndFade((double) stored / (double) inv.getItemInSlot(DISPLAY_SLOT).getMaxStackSize());
-
-//         inv.replaceExistingItem(STATUS_SLOT, new CustomItem(
-//             Material.LIME_STAINED_GLASS_PANE, "&6已存物件: &e" + stored + " / " + MAX_STORAGE,
-//             "&b" + storedStacks + "組 &8| &7" + storedPercent + "&7%"));
-// =======
-// >>>>>>> upstream/master
         if (showHologram.getValue() && (hasHolo == null || hasHolo.equals("true"))) {
             updateHologram(b, itemName + " &9x" + stored + " &7(" + storedPercent + "&7%)");
         }
@@ -542,12 +424,12 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
         if (toggle == null || toggle.equals("true")) {
             BlockStorage.addBlockInfo(b.getLocation(), "holo", "false");
             menu.replaceExistingItem(HOLOGRAM_TOGGLE_SLOT,
-                new CustomItem(Material.QUARTZ_SLAB, "&3Toggle Hologram &c(Off)"));
+                new CustomItem(Material.QUARTZ_SLAB, "&3切換浮動字 &c(Off)"));
             removeHologram(b);
         } else {
             BlockStorage.addBlockInfo(b.getLocation(), "holo", "true");
             menu.replaceExistingItem(HOLOGRAM_TOGGLE_SLOT,
-                new CustomItem(Material.QUARTZ_SLAB, "&3Toggle Hologram &a(On)"));
+                new CustomItem(Material.QUARTZ_SLAB, "&3切換浮動字 &a(On)"));
             updateMenu(b, BlockStorage.getInventory(b));
         }
     }
