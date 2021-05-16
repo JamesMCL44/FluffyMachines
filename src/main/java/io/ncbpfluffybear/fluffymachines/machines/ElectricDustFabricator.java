@@ -56,7 +56,7 @@ public class ElectricDustFabricator extends AContainer implements RecipeDisplayI
 
         for (SlimefunItemStack dust : Constants.dusts) {
             displayRecipes.add(new CustomItem(Material.COBBLESTONE,
-                "&fAny Cobblestone Variant", "&7Cobblestone", "&7Andesite", "&7Diorite", "&7Granite"
+                "&f任何鵝卵石變體", "&7鵝卵石", "&7安山岩", "&7閃長岩", "&7花崗岩"
             ));
             displayRecipes.add(dust);
         }

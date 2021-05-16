@@ -68,8 +68,8 @@ public class AutoCrafter extends SlimefunItem implements EnergyNetComponent {
                 if (!BlockStorage.hasBlockInfo(b)
                     || BlockStorage.getLocationInfo(b.getLocation(), "enabled") == null
                     || BlockStorage.getLocationInfo(b.getLocation(), "enabled").equals(String.valueOf(false))) {
-                    menu.replaceExistingItem(6, new CustomItem(Material.GUNPOWDER, "&7Enabled: &4\u2718", "",
-                        "&e> Click to enable this Machine")
+                    menu.replaceExistingItem(6, new CustomItem(Material.GUNPOWDER, "&7運作中: &4\u2718", "",
+                        "&e> 單擊啟用")
                     );
                     menu.addMenuClickHandler(6, (p, slot, item, action) -> {
                         BlockStorage.addBlockInfo(b, "enabled", String.valueOf(true));
@@ -77,8 +77,8 @@ public class AutoCrafter extends SlimefunItem implements EnergyNetComponent {
                         return false;
                     });
                 } else {
-                    menu.replaceExistingItem(6, new CustomItem(Material.REDSTONE, "&7Enabled: &2\u2714",
-                        "", "&e> Click to disable this Machine")
+                    menu.replaceExistingItem(6, new CustomItem(Material.REDSTONE, "&7運作中: &2\u2714",
+                        "", "&e> 單擊停用")
                     );
                     menu.addMenuClickHandler(6, (p, slot, item, action) -> {
                         BlockStorage.addBlockInfo(b, "enabled", String.valueOf(false));
@@ -184,8 +184,8 @@ public class AutoCrafter extends SlimefunItem implements EnergyNetComponent {
             });
         }
 
-        preset.addItem(2, new CustomItem(new ItemStack(material), "&eRecipe",
-                "", "&bPut in the Recipe you want to craft", machineName + " Recipes ONLY"
+        preset.addItem(2, new CustomItem(new ItemStack(material), "&e合成表",
+                "", "&b放進想要合成的材料", "只限" + machineName + "合成表"
             ),
             (p, slot, item, action) -> false);
     }

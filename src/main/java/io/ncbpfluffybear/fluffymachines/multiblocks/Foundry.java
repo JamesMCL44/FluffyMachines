@@ -38,7 +38,7 @@ public class Foundry extends MultiBlockMachine {
         if (BlockStorage.getLocationInfo(b.getLocation(), "accessible") == null) {
             BlockStorage.addBlockInfo(b, "accessible", "true");
             //p.closeInventory();
-            Utils.send(p, "&eFoundry has been registered. Right click the furnace with a lava bucket to heat.");
+            Utils.send(p, "&e已登記鑄造廠. 手持熔岩桶右點擊加熱.");
         } else if (BlockStorage.getLocationInfo(b.getLocation(), "ignited") == null) {
             if (p.getInventory().getItemInMainHand().getType() == Material.LAVA_BUCKET) {
 
@@ -59,7 +59,7 @@ public class Foundry extends MultiBlockMachine {
                 BlockStorage.addBlockInfo(b, "stand", String.valueOf(lavaStand.getUniqueId()));
                 BlockStorage.addBlockInfo(b, "ignited", "true");
             } else {
-                Utils.send(p, "&cThis foundry still needs to be filled with lava!");
+                Utils.send(p, "&c鑄造廠熱力不足, 請使用熔岩桶加熱!");
             }
         } else if (BlockStorage.getLocationInfo(b.getLocation(), "ignited") != null) {
             Furnace furnace = (Furnace) b.getState();

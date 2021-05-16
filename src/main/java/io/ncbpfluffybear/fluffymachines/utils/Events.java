@@ -160,7 +160,7 @@ public class Events implements Listener {
                     p.spawnParticle(Particle.DRAGON_BREATH, p.getLocation(), 10);
 
                 } else {
-                    Utils.send(p, "&cMissing destination Warp Pad!");
+                    Utils.send(p, "&c無法找到目的地傳送台!");
 
                 }
             }
@@ -200,7 +200,7 @@ public class Events implements Listener {
     public void onExtractionNodePlace(BlockPlaceEvent e) {
         if ((e.getBlock().getY() != e.getBlockAgainst().getY() || e.getBlockAgainst().getType() != Material.ENDER_CHEST)
             && isExtractionNode(e.getItemInHand())) {
-            Utils.send(e.getPlayer(), "&cYou can only place this on an Ender Chest!");
+            Utils.send(e.getPlayer(), "&c你只可把這放置在終界箱上!");
             e.setCancelled(true);
         }
     }
