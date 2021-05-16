@@ -1,6 +1,7 @@
 package io.ncbpfluffybear.fluffymachines.multiblocks.components;
 
 import dev.j3fftw.extrautils.objects.NonHopperableBlock;
+import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.ncbpfluffybear.fluffymachines.utils.Constants;
@@ -29,9 +30,11 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -73,7 +76,7 @@ public class SuperheatedFurnace extends NonHopperableBlock {
     public SuperheatedFurnace(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
 
-        // addItemHandler(onBreak());
+        addItemHandler(onBreak());
 
         new BlockMenuPreset(getId(), "&c熔鍊鑄造廠") {
 
@@ -132,98 +135,100 @@ public class SuperheatedFurnace extends NonHopperableBlock {
             }
         };
 
-        registerBlockHandler(getId(), (p, b, stack, reason) -> {
-            BlockMenu inv = BlockStorage.getInventory(b);
+// <<<<<<< HEAD
+//         registerBlockHandler(getId(), (p, b, stack, reason) -> {
+//             BlockMenu inv = BlockStorage.getInventory(b);
 
-            if (inv != null) {
+//             if (inv != null) {
 
-                int itemCount = 0;
+//                 int itemCount = 0;
 
-                SlimefunItem sfItem = SlimefunItem.getByItem(p.getInventory().getItemInMainHand());
-                if (sfItem != null && (
-                    sfItem == SlimefunItems.EXPLOSIVE_PICKAXE.getItem()
-                        || sfItem == SlimefunItems.EXPLOSIVE_SHOVEL.getItem()
-                        || sfItem == FluffyItems.UPGRADED_EXPLOSIVE_PICKAXE.getItem()
-                        || sfItem == FluffyItems.UPGRADED_EXPLOSIVE_SHOVEL.getItem()
-                )) {
-                    Utils.send(p, "&c你不可以使用爆破工具破壞鑄造廠!");
-                    return true;
-                }
+//                 SlimefunItem sfItem = SlimefunItem.getByItem(p.getInventory().getItemInMainHand());
+//                 if (sfItem != null && (
+//                     sfItem == SlimefunItems.EXPLOSIVE_PICKAXE.getItem()
+//                         || sfItem == SlimefunItems.EXPLOSIVE_SHOVEL.getItem()
+//                         || sfItem == FluffyItems.UPGRADED_EXPLOSIVE_PICKAXE.getItem()
+//                         || sfItem == FluffyItems.UPGRADED_EXPLOSIVE_SHOVEL.getItem()
+//                 )) {
+//                     Utils.send(p, "&c你不可以使用爆破工具破壞鑄造廠!");
+//                     return true;
+//                 }
 
-                int stored = Integer.parseInt(getBlockInfo(b.getLocation(), "stored"));
-                String type = getBlockInfo(b.getLocation(), "type");
+//                 int stored = Integer.parseInt(getBlockInfo(b.getLocation(), "stored"));
+//                 String type = getBlockInfo(b.getLocation(), "type");
 
-                for (Entity e : p.getNearbyEntities(5, 5, 5)) {
-                    if (e instanceof Item) {
-                        itemCount++;
-                    }
-                }
+//                 for (Entity e : p.getNearbyEntities(5, 5, 5)) {
+//                     if (e instanceof Item) {
+//                         itemCount++;
+//                     }
+//                 }
 
-                if (itemCount > 5) {
-                    Utils.send(p, "&c請先移除鑄造廠附近的物品!");
-                    return false;
-                }
+//                 if (itemCount > 5) {
+//                     Utils.send(p, "&c請先移除鑄造廠附近的物品!");
+//                     return false;
+//                 }
 
-                inv.dropItems(b.getLocation(), INPUT_SLOT);
-                inv.dropItems(b.getLocation(), DUST_OUTPUT_SLOT);
-                inv.dropItems(b.getLocation(), INGOT_OUTPUT_SLOT);
+//                 inv.dropItems(b.getLocation(), INPUT_SLOT);
+//                 inv.dropItems(b.getLocation(), DUST_OUTPUT_SLOT);
+//                 inv.dropItems(b.getLocation(), INGOT_OUTPUT_SLOT);
 
-                if (stored > 0) {
-                    int stackSize = Constants.MAX_STACK_SIZE;
-                    ItemStack dust = SlimefunItem.getByID(type + "_DUST").getItem();
+//                 if (stored > 0) {
+//                     int stackSize = Constants.MAX_STACK_SIZE;
+//                     ItemStack dust = SlimefunItem.getByID(type + "_DUST").getItem();
 
-                    if (stored > OVERFLOW_AMOUNT) {
+//                     if (stored > OVERFLOW_AMOUNT) {
 
-                        Utils.send(p, "&e桶子已滿了! 溢出了 " + OVERFLOW_AMOUNT + "件物品!");
-                        int toRemove = OVERFLOW_AMOUNT;
-                        while (toRemove >= stackSize) {
+//                         Utils.send(p, "&e桶子已滿了! 溢出了 " + OVERFLOW_AMOUNT + "件物品!");
+//                         int toRemove = OVERFLOW_AMOUNT;
+//                         while (toRemove >= stackSize) {
 
-                            b.getWorld().dropItemNaturally(b.getLocation(), new CustomItem(dust, stackSize));
+//                             b.getWorld().dropItemNaturally(b.getLocation(), new CustomItem(dust, stackSize));
 
-                            toRemove = toRemove - stackSize;
-                        }
+//                             toRemove = toRemove - stackSize;
+//                         }
 
-                        if (toRemove > 0) {
-                            b.getWorld().dropItemNaturally(b.getLocation(), new CustomItem(dust, toRemove));
-                        }
+//                         if (toRemove > 0) {
+//                             b.getWorld().dropItemNaturally(b.getLocation(), new CustomItem(dust, toRemove));
+//                         }
 
-                        BlockStorage.addBlockInfo(b, "stored", String.valueOf(stored - OVERFLOW_AMOUNT));
+//                         BlockStorage.addBlockInfo(b, "stored", String.valueOf(stored - OVERFLOW_AMOUNT));
 
-                        return false;
-                    } else {
+//                         return false;
+//                     } else {
 
-                        // Everything greater than 1 stack
-                        while (stored >= stackSize) {
+//                         // Everything greater than 1 stack
+//                         while (stored >= stackSize) {
 
-                            b.getWorld().dropItemNaturally(b.getLocation(), new CustomItem(dust, stackSize));
+//                             b.getWorld().dropItemNaturally(b.getLocation(), new CustomItem(dust, stackSize));
 
-                            stored = stored - stackSize;
-                        }
+//                             stored = stored - stackSize;
+//                         }
 
-                        // Drop remaining, if there is any
-                        if (stored > 0) {
-                            b.getWorld().dropItemNaturally(b.getLocation(), new CustomItem(dust, stored));
-                        }
+//                         // Drop remaining, if there is any
+//                         if (stored > 0) {
+//                             b.getWorld().dropItemNaturally(b.getLocation(), new CustomItem(dust, stored));
+//                         }
 
-                        if (BlockStorage.getLocationInfo(b.getLocation(), "stand") != null) {
-                            Bukkit.getEntity(UUID.fromString(BlockStorage.getLocationInfo(b.getLocation(), "stand"))).remove();
-                        }
+//                         if (BlockStorage.getLocationInfo(b.getLocation(), "stand") != null) {
+//                             Bukkit.getEntity(UUID.fromString(BlockStorage.getLocationInfo(b.getLocation(), "stand"))).remove();
+//                         }
 
-                        // In case they use an explosive pick
-                        BlockStorage.addBlockInfo(b, "stored", "0");
-                        return true;
-                    }
-                }
-                if (BlockStorage.getLocationInfo(b.getLocation(), "stand") != null) {
-                    Bukkit.getEntity(UUID.fromString(BlockStorage.getLocationInfo(b.getLocation(), "stand"))).remove();
-                }
-            }
-            return true;
-        });
+//                         // In case they use an explosive pick
+//                         BlockStorage.addBlockInfo(b, "stored", "0");
+//                         return true;
+//                     }
+//                 }
+//                 if (BlockStorage.getLocationInfo(b.getLocation(), "stand") != null) {
+//                     Bukkit.getEntity(UUID.fromString(BlockStorage.getLocationInfo(b.getLocation(), "stand"))).remove();
+//                 }
+//             }
+//             return true;
+//         });
 
+// =======
+// >>>>>>> upstream/master
     }
 
-    /*
     private BlockBreakHandler onBreak() {
         return new BlockBreakHandler(false, false) {
             @Override
@@ -278,6 +283,7 @@ public class SuperheatedFurnace extends NonHopperableBlock {
                             BlockStorage.addBlockInfo(b, "stored", String.valueOf(stored - OVERFLOW_AMOUNT));
 
                             e.setCancelled(true);
+                            updateIndicator(b);
                             return;
                         } else {
 
@@ -300,17 +306,20 @@ public class SuperheatedFurnace extends NonHopperableBlock {
 
                             // In case they use an explosive pick
                             BlockStorage.addBlockInfo(b, "stored", "0");
+                            updateIndicator(b);
                             return;
                         }
                     }
                     if (BlockStorage.getLocationInfo(b.getLocation(), "stand") != null) {
-                        Bukkit.getEntity(UUID.fromString(BlockStorage.getLocationInfo(b.getLocation(), "stand"))).remove();
+                        Entity en = Bukkit.getEntity(UUID.fromString(BlockStorage.getLocationInfo(b.getLocation(), "stand")));
+                        if (en != null) {
+                            en.remove();
+                        }
                     }
                 }
             }
         };
     }
-    */
 
     protected void constructMenu(BlockMenuPreset preset) {
         for (int i : dustOutputBorder) {
