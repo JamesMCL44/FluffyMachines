@@ -68,6 +68,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
     private final int MAX_STORAGE;
 
     private final ItemSetting<Boolean> showHologram = new ItemSetting<>(this, "show-hologram", true);
+    private final ItemSetting<Boolean> breakOnlyWhenEmpty = new ItemSetting<>(this, "break-only-when-empty", false);
 
     public Barrel(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, String name,
                   int MAX_STORAGE) {
@@ -162,7 +163,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
         };
 
         addItemHandler(onBreak());
-        addItemSetting(showHologram);
+        addItemSetting(showHologram, breakOnlyWhenEmpty);
 
     }
 
@@ -178,6 +179,12 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
                 if (inv != null) {
 
                     int itemCount = 0;
+
+                    if (breakOnlyWhenEmpty.getValue() && stored != 0) {
+                        Utils.send(p, "&cThis barrel can't be broken since it has items inside it!");
+                        e.setCancelled(true);
+                        return;
+                    }
 
                     for (Entity en : p.getNearbyEntities(5, 5, 5)) {
                         if (en instanceof Item) {
@@ -214,7 +221,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
                             }
 
                             BlockStorage.addBlockInfo(b, "stored", String.valueOf(stored - OVERFLOW_AMOUNT));
-                            updateMenu(b, inv);
+                            updateMenu(b, inv, true);
 
                             e.setCancelled(true);
                         } else {
@@ -234,7 +241,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
 
                             // In case they use an explosive pick
                             BlockStorage.addBlockInfo(b, "stored", "0");
-                            updateMenu(b, inv);
+                            updateMenu(b, inv, true);
                             removeHologram(b);
                         }
                     } else {
@@ -304,7 +311,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
                         inv.consumeItem(slot, amount);
 
                         BlockStorage.addBlockInfo(b, "stored", String.valueOf((stored + amount)));
-                        updateMenu(b, inv);
+                        updateMenu(b, inv, false);
                     }
                 }
             }
@@ -326,7 +333,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
 
                         BlockStorage.addBlockInfo(b, "stored", String.valueOf((stored - amount)));
                         inv.pushItem(clone, OUTPUT_SLOTS);
-                        updateMenu(b, inv);
+                        updateMenu(b, inv, false);
                     }
 
                 } else if (stored != 0) {
@@ -336,7 +343,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
                     if (inv.fits(clone, OUTPUT_SLOTS)) {
                         BlockStorage.addBlockInfo(b, "stored", "0");
                         inv.pushItem(clone, OUTPUT_SLOTS);
-                        updateMenu(b, inv);
+                        updateMenu(b, inv, false);
                     }
                 }
             }
@@ -350,7 +357,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
         inv.consumeItem(slot, amount);
 
         BlockStorage.addBlockInfo(b, "stored", String.valueOf((stored + amount)));
-        updateMenu(b, inv);
+        updateMenu(b, inv, false);
     }
 
     private void storeItem(Block b, BlockMenu inv, int slot, ItemStack item, int stored) {
@@ -358,7 +365,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
         inv.consumeItem(slot, amount);
 
         BlockStorage.addBlockInfo(b, "stored", String.valueOf((stored + amount)));
-        updateMenu(b, inv);
+        updateMenu(b, inv, false);
     }
 
     /**
@@ -379,7 +386,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
      * @param b   is the barrel block
      * @param inv is the barrel's inventory
      */
-    private void updateMenu(Block b, BlockMenu inv) {
+    private void updateMenu(Block b, BlockMenu inv, boolean force) {
         String hasHolo = BlockStorage.getLocationInfo(b.getLocation(), "holo");
         int stored = getStored(b);
         String itemName;
@@ -389,7 +396,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
             doubleRoundAndFade((double) stored / (double) inv.getItemInSlot(DISPLAY_SLOT).getMaxStackSize());
 
         // This helps a bit with lag, but may have visual impacts
-        if (inv.hasViewer()) {
+        if (inv.hasViewer() || force) {
             inv.replaceExistingItem(STATUS_SLOT, new CustomItem(
                 Material.LIME_STAINED_GLASS_PANE, "&6已存物件: &e" + stored + " / " + MAX_STORAGE,
                 "&b" + storedStacks + "組 &8| &7" + storedPercent + "&7%"));
@@ -429,8 +436,13 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
         } else {
             BlockStorage.addBlockInfo(b.getLocation(), "holo", "true");
             menu.replaceExistingItem(HOLOGRAM_TOGGLE_SLOT,
-                new CustomItem(Material.QUARTZ_SLAB, "&3切換浮動字 &a(On)"));
-            updateMenu(b, BlockStorage.getInventory(b));
+// <<<<<<< HEAD
+//                 new CustomItem(Material.QUARTZ_SLAB, "&3切換浮動字 &a(On)"));
+//             updateMenu(b, BlockStorage.getInventory(b));
+// =======
+                new CustomItem(Material.QUARTZ_SLAB, "&3Toggle Hologram &a(On)"));
+            updateMenu(b, BlockStorage.getInventory(b), false);
+// >>>>>>> upstream/master
         }
     }
 
@@ -453,7 +465,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
         }
 
         BlockStorage.addBlockInfo(b.getLocation(), "stored", String.valueOf(stored));
-        updateMenu(b, menu);
+        updateMenu(b, menu,false);
     }
 
     public void extractAll(Player p, BlockMenu menu, Block b) {
@@ -494,7 +506,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
         }
 
         BlockStorage.addBlockInfo(b.getLocation(), "stored", String.valueOf(stored));
-        updateMenu(b, menu);
+        updateMenu(b, menu,false);
     }
 
     public static String doubleRoundAndFade(double num) {

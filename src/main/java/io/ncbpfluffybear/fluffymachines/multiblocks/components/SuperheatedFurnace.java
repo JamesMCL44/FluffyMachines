@@ -1,6 +1,7 @@
 package io.ncbpfluffybear.fluffymachines.multiblocks.components;
 
 import dev.j3fftw.extrautils.objects.NonHopperableBlock;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
@@ -73,10 +74,13 @@ public class SuperheatedFurnace extends NonHopperableBlock {
 
     private final int OVERFLOW_AMOUNT = 3240;
 
+    private final ItemSetting<Boolean> breakOnlyWhenEmpty = new ItemSetting<>(this, "break-only-when-empty", false);
+
     public SuperheatedFurnace(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
 
         addItemHandler(onBreak());
+        addItemSetting(breakOnlyWhenEmpty);
 
         new BlockMenuPreset(getId(), "&c熔鍊鑄造廠") {
 
@@ -151,6 +155,12 @@ public class SuperheatedFurnace extends NonHopperableBlock {
 
                     int stored = Integer.parseInt(getBlockInfo(b.getLocation(), "stored"));
                     String type = getBlockInfo(b.getLocation(), "type");
+
+                    if (breakOnlyWhenEmpty.getValue() && stored != 0) {
+                        Utils.send(p, "&cThis barrel can't be broken since it has items inside it!");
+                        e.setCancelled(true);
+                        return;
+                    }
 
                     for (Entity en : p.getNearbyEntities(5, 5, 5)) {
                         if (en instanceof Item) {
@@ -348,8 +358,13 @@ public class SuperheatedFurnace extends NonHopperableBlock {
             inv.replaceExistingItem(INPUT_INDICATOR, new CustomItem(new ItemStack(Material.CHEST), "&6已溶化礦粉: &e" + stored + " &7(" + Double.parseDouble(stored) / MAX_STORAGE + "%)", "&b類型: " + type, "&7組: " + Double.parseDouble(stored) / 64));
 
         }
-        inv.replaceExistingItem(DUST_INDICATOR, new CustomItem(new ItemStack(Material.GUNPOWDER), "&6可用礦粉: &e" + stored, "&a> &e右點擊 &a提取x1", "&a> &e左點擊 &a提取x64"));
-        inv.replaceExistingItem(INGOT_INDICATOR, new CustomItem(new ItemStack(Material.IRON_INGOT), "&6可用礦錠: &e" + stored, "&a> &e右點擊 &a提取x1", "&a> &e左點擊 &a提取x64"));
+// <<<<<<< HEAD
+//         inv.replaceExistingItem(DUST_INDICATOR, new CustomItem(new ItemStack(Material.GUNPOWDER), "&6可用礦粉: &e" + stored, "&a> &e右點擊 &a提取x1", "&a> &e左點擊 &a提取x64"));
+//         inv.replaceExistingItem(INGOT_INDICATOR, new CustomItem(new ItemStack(Material.IRON_INGOT), "&6可用礦錠: &e" + stored, "&a> &e右點擊 &a提取x1", "&a> &e左點擊 &a提取x64"));
+// =======
+        inv.replaceExistingItem(DUST_INDICATOR, new CustomItem(new ItemStack(Material.GUNPOWDER), "&6Dust Available: &e" + stored, "&a> &eLeft Click &ahere to retrieve 1", "&a> &eRight Click &ahere to retrieve 64"));
+        inv.replaceExistingItem(INGOT_INDICATOR, new CustomItem(new ItemStack(Material.IRON_INGOT), "&6Ingots Available: &e" + stored, "&a> &eLeft Click &ahere to retrieve 1", "&a> &eRight Click &ahere to retrieve 64"));
+// >>>>>>> upstream/master
 
 
     }
